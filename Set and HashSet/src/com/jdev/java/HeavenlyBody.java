@@ -1,4 +1,4 @@
-package com.timbuchalka;
+package com.jdev.java;
 
 import java.util.HashSet;
 import java.util.Set;

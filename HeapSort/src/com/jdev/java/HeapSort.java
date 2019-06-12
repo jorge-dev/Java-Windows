@@ -4,7 +4,7 @@ import java.util.NoSuchElementException;
 
 public class HeapSort<T extends Comparable<T>> {
 
-
+private int heapSize = 0;
 // methods described in Lecture 17
 
     /*=========================================================
@@ -29,16 +29,25 @@ public class HeapSort<T extends Comparable<T>> {
         int result;
         boolean even;
 
-        //since x can be even or odd, this has to be handled in two
-        //cases
-        even = ( (x % 2) == 0);
-        if (even) {
-            result = (x - 2)/2;
+      //  if (!isRoot(x)) {
+            //since x can be even or odd, this has to be handled in two
+            //cases
+         /*   even = ((x % 2) == 0);
+            if (even) {
+                result = (x - 2) / 2;
+            } else {
+                result = (x - 1) / 2;
+            }
+            return result;*/
+       // }
+     //   else {
+      //      throw  new ArrayIndexOutOfBoundsException("Opps"); }
+
+        if (x%2 == 0) {
+            return (x-2)/2;
+        } else {
+            return (x-1)/2;
         }
-        else{
-            result = (x - 1)/2;
-        }
-        return result;
     }
 
     /*=========================================================
@@ -61,22 +70,32 @@ public class HeapSort<T extends Comparable<T>> {
                      or x's value is less than its parent's.
       ===========================================================*/
     private void bubbleUp(Array<T> A, int x){
+      /*
         System.out.println(" You are in bubbleUp ");
 
         T value_of_x = value(A, x);
-        T value_of_x_parent = value(A,parent(x));
+       // T value_of_x_parent = value(A,parent(x));
         //compares x's value with its parent
-        int xValueComp = value_of_x.compareTo(value_of_x_parent);
+        //int xValueComp = value_of_x.compareTo(value_of_x_parent);
 
-        if(!isRoot(x) && (xValueComp > 0)){
-            T temp = value_of_x;
-            A.set(x, value_of_x_parent);
+        if((!isRoot(x)) && (value_of_x.compareTo(value(A,parent(x))) > 0)){
+            T temp = A.get(x);
+            A.set(x, A.get(parent(x)));
             A.set(parent(x), temp);
             bubbleUp(A, parent(x));
 
 
         }
+        */
 
+        while ((x > 0) && ((A.get(x)).compareTo(A.get(parent(x))) > 0)) {
+
+            T z = A.get(x);
+            A.set(x, A.get(parent(x)));
+            A.set(parent(x), z);
+            x = parent(x);
+
+        }
     }
 
     /*=========================================================
@@ -84,27 +103,46 @@ public class HeapSort<T extends Comparable<T>> {
       Description:
       ===========================================================*/
     private void insert(Array<T> A, T x){
-
+/*
         System.out.println(" You are in insert ");
 
-        int heapSize = 1;
-        if (heapSize < A.length()){
 
-            A.set(heapSize,x);
-            heapSize += 1;
-            bubbleUp(A,heapSize);
+        if (heapSize < A.length()){
+            int i = heapSize ;
+            A.set(i,x);
+            heapSize = heapSize + 1;
+
+            bubbleUp(A,i);
         }
         else {
             System.out.println(" Heap is Full ");
         }
+
+*/
+
+        if (heapSize < A.length()) {
+
+            A.set(heapSize, x);
+            heapSize = heapSize + 1;
+            int i = heapSize-1;
+            bubbleUp(A,i);
+
+        } else {
+
+            throw new NullPointerException("This heap is already full.");
+
+        }
+
     }
+
+
 
     /*=========================================================
       Method:        hasLeft
       Description:
       ===========================================================*/
     private boolean hasLeft(Array<T> A, int x){
-        int heapSize = A.length();
+        //int heapSize = A.length();
         return ((2*x + 1) < heapSize);
     }
 
@@ -115,7 +153,7 @@ public class HeapSort<T extends Comparable<T>> {
       Description:
       ===========================================================*/
     private boolean hasRight(Array<T> A, int x){
-        int heapSize = A.length();
+        //int heapSize = A.length();
         return ((2*x + 2) < heapSize);
     }
 
@@ -144,15 +182,17 @@ public class HeapSort<T extends Comparable<T>> {
       Description:
       ===========================================================*/
     private void bubbleDown(Array<T> A, int x){
+       /*
         int compare_left_right = value(A,left(x)).compareTo(value(A,right(x)));
         int compare_left_x = value(A,left(x)).compareTo(value(A,x));
         int compare_right_x = value(A,right(x)).compareTo(value(A,x));
-        //int value_left = value(A,left(x));
-        //int value_right = value(A,right(x));
+        T value_left = value(A,left(x));
+        T value_right = value(A,right(x));
+
         if (hasRight(A,x)){
             if (compare_left_right >= 0){ //
                 if(compare_left_x > 0){ //
-                    T temp = value(A,left(x));
+                    T temp = value_left;
                     A.set(left(x),value(A,x));
                     A.set(x, temp);
                     bubbleDown(A,left(x));
@@ -162,7 +202,7 @@ public class HeapSort<T extends Comparable<T>> {
 
             else if(compare_right_x > 0){
 
-                T temp = value(A,right(x));
+                T temp = value_right;
                 A.set(right(x), value(A,x));
                 A.set(x, temp);
                 bubbleDown(A,right(x));
@@ -174,7 +214,7 @@ public class HeapSort<T extends Comparable<T>> {
 
         else if(hasLeft(A,x)){
             if (compare_left_x > 0){
-                T temp = value(A,left(x));
+                T temp = value_left;
                 A.set(left(x),value(A,x));
                 A.set(x, temp);
                 bubbleDown(A,left(x));
@@ -184,9 +224,56 @@ public class HeapSort<T extends Comparable<T>> {
 
 
         }// end last end if
+*/
+
+        while (hasLeft(A,x)) {
+
+            if (hasRight(A,x)) {
+
+                if ((A.get(right(x))).compareTo(A.get(left(x))) >= 0) {
+
+                    if ((A.get(right(x))).compareTo(A.get(x)) > 0) {
+
+                        T z = A.get(x);
+                        A.set(x, A.get(right(x)));
+                        A.set(right(x), z);
+                        x = right(x);
+
+                    } else {
+
+                        x = heapSize - 1;
+
+                    }
+
+                } else  if ((A.get(left(x))).compareTo(A.get(x)) > 0 ){
+
+                    T z = A.get(x);
+                    A.set(x, A.get(left(x)));
+                    A.set(left(x), z);
+                    x = left(x);
+
+                } else {
+
+                    x = heapSize - 1;
+
+                }
+
+            } else  if ((A.get(left(x))).compareTo(A.get(x)) > 0){
+
+                T z = A.get(x);
+                A.set(x, A.get(left(x)));
+                A.set(left(x), z);
+                x = left(x);
+
+            } else {
+
+                x = heapSize - 1;
+
+            }
+
+        }
 
     }//end method
-
 
 
 
@@ -196,16 +283,18 @@ public class HeapSort<T extends Comparable<T>> {
       Description:
       ===========================================================*/
     private T deleteMax (Array<T> A) throws NoSuchElementException {
+
+/*
         System.out.println( " You are in delete ");
-        int heap_size = A.length();
-        if (heap_size == 0){
+      //  int heap_size = A.length();
+        if (heapSize == 0){
             throw new NoSuchElementException("heap is empty.");
         }
 
         else {
-            T v = A.get(heap_size -1);
-            heap_size -= 1;
-            if (heap_size == 0){
+            T v = A.get(heapSize -1);
+            heapSize = heapSize - 1;
+            if (heapSize == 0){
                 return v;
             }
 
@@ -215,8 +304,24 @@ public class HeapSort<T extends Comparable<T>> {
                 bubbleDown(A,0);
                 return delete;
             }
+*/
+
+
+        if (heapSize > 0) {
+
+            T z = A.get(0);
+            A.set(0, A.get(heapSize - 1));
+            A.set(heapSize - 1, null);        // Not necessary; can be missed without penalty
+            heapSize = heapSize - 1;
+            bubbleDown(A,0);
+            return z;
+
+        } else {
+
+            throw new NoSuchElementException("This heap is already empty.");
 
         }
+
 
 
 
@@ -234,25 +339,42 @@ public class HeapSort<T extends Comparable<T>> {
 
     public void sort( Array<T> A ){
 
-        Array<T> H = new Array<T>(1);
+        Array<T> H = new Array<T>(A.length());
+        heapSize = 1;
         int i = 1;
+        if (A.length() > 0) {
+            H.set(0, A.get(0));
+        }
         while (i < A.length()){
 
-            insert(A,H.get(i));
-            System.out.println(H.get(i));
+            insert(H,A.get(i));
+            System.out.println("H.get = "  + H.get(i));
             i+= 1;
         }
+
         i = A.length() - 1;
-        while (i > 0){
+        while (i >= 0){
 
             T largest = deleteMax(H);
             A.set(i,largest);
-            System.out.println(A.get(i));
+        //    System.out.println("A.get = " +A.get(i));
             i -=1;
 
         }
 
+/*
+        while (heapSize > 1) {
 
+            try {
+
+                T current = deleteMax(H);
+                A.set(heapSize, current);
+
+            } catch (NoSuchElementException ex) {
+            }
+
+        }
+*/
 
 
     }
